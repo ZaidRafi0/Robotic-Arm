@@ -1,6 +1,6 @@
-# Robotic Arm — [Your Project Name]
+# Inverse Kinematics Robotic Arm
 
-> One-line description. e.g. "A 6-DOF desktop robotic arm with a redesigned base and gripper, built around MG996R servos and an Arduino Uno."
+> A 4-DOF desktop robotic arm with a redesigned base and gripper, built around MG996R and MG90 servos and an Arduino Uno
 
 ![Demo](media/demo.gif)
 <!-- Put your demo GIF here. This is the most important thing in the whole README.
@@ -11,8 +11,7 @@
 
 ## What this is
 
-Brief paragraph: what the arm does, how many degrees of freedom, what it's controlled by.
-Mention up front that it's based on [original tutorial/design name](link) — then point to what you changed.
+This project is a fully custom 3D printed 4-DOF robotic arm with a gripper. The arm is powered by 4 MG996R servos, 1 MG90 Micro Servo, and an Arduino Uno. All parts are original and individually modeled. 
 
 ## What I changed (and why)
 
