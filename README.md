@@ -1,6 +1,6 @@
 # Robotic Arm — 4-Axis Articulated Arm (Custom Design)
 
-> A 4-DOF robotic arm designed and built from scratch — base rotation, shoulder, elbow, and wrist, plus a gripper. ~205 mm reach, servo-driven, fully 3D-printed structure. Every joint, the base bearing, and the actuator selection were designed around a worked torque budget rather than copied from a reference build.
+> A 4-DOF robotic arm designed and built from scratch; base rotation, shoulder, elbow, and wrist, plus a gripper. ~205 mm reach, servo-driven, fully 3D-printed structure. Every joint, the base bearing, and the actuator selection were designed around a worked torque budget rather than copied from a reference build.
 
 ![Demo](media/demo.gif)
 <!-- Record a short clip of the arm moving, convert to GIF, and drop it in /media as demo.gif.
@@ -8,9 +8,9 @@
 
 ## Overview
 
-This is a custom 4-axis arm built around the actuators I had on hand: four MG996R servos and one SG90 micro servo. Rather than start from a fixed payload/reach target, I worked backward from what those servos could actually hold — the shoulder joint is the binding constraint, so the link lengths were sized to keep it under half of the MG996R's stall torque. The result is a working arm with honest, measured specs instead of optimistic ones.
+This is a custom 4-axis arm built around the actuators I had on hand: four MG996R servos and one SG90 micro servo. Rather than start from a fixed payload/reach target, I worked backward from what those servos could actually hold. The shoulder joint is the binding constraint, so the link lengths were sized to keep it under half of the MG996R's stall torque. The result is a working arm with honest, measured specs instead of optimistic ones.
 
-The base rotation joint was the most involved part of the design: the full weight and tipping moment of the arm is carried by a dedicated bearing surface, **not** by the servo's output shaft, which is rated for torque only.
+The base rotation joint was the most involved part of the design: the full weight and tipping moment of the arm is carried by a dedicated bearing surface, not by the servo's output shaft, which is rated for torque only.
 
 ## Specs
 
@@ -56,9 +56,9 @@ See [`docs/bom.csv`](docs/bom.csv) for the full parts list.
 
 ## Base & bearing design
 
-- Base: 98 mm outer diameter, 8 mm walls (~82 mm bore), with an integrated servo cradle and a wire pass-through in the wall.
+- Base: 98 mm outer diameter, 4 mm walls (~90 mm bore), with an integrated servo cradle and a wire pass-through in the wall.
 - The rotating platform sits on the base rim as a plain (sliding) thrust surface, captured by a center hold-down pin that resists the tipping moment.
-- A PTFE/nylon washer ring (or greased, finely-printed rim face) reduces stick-slip at the sliding contact.
+- *A PTFE/nylon washer ring (or greased, finely-printed rim face) reduces stick-slip at the sliding contact.*
 - The servo sits in the base with its spline up; the horn couples to the platform center through slotted holes.
 
 ## Print settings
@@ -66,8 +66,8 @@ See [`docs/bom.csv`](docs/bom.csv) for the full parts list.
 | Part | Infill | Walls | Notes |
 |---|---|---|---|
 | Base | 30% gyroid | 4 | 5 top/bottom layers; solid material under all boss roots |
-| Rotating platform | wagon-wheel ribbed | 4 | Solid rim (race) + solid center hub; ribs to stay flat; print rim-side up |
-| Arm links | low (~15–20%) | 3 | Hollow/ribbed cross-section — keep upper arm <=40 g, forearm <=32 g to hold the torque budget |
+| *Rotating platform | wagon-wheel ribbed | 4 | Solid rim (race) + solid center hub; ribs to stay flat; print rim-side up* |
+| *Arm links | low (~15–20%) | 3 | Hollow/ribbed cross-section — keep upper arm <=40 g, forearm <=32 g to hold the torque budget* |
 
 General rule used throughout: **walls carry load, infill fills space** — perimeters are raised before infill on any part that feels weak.
 
@@ -85,12 +85,9 @@ General rule used throughout: **walls carry load, infill fills space** — perim
 
 *(Fill this in as you go — a documented failure and fix is one of the strongest things on the page.)*
 
-- 
+- In V1 of the base, the base was way to big, leading to an expensive print, and an unproportionally large base for the rest of the robot. V1 originally designed with the idea of keeping the Arduino Uno inside the base, however for easy of fabrication, V2 was designed to only house the servo, and the Arduino Uno would sit outside the robotic arm.
 - 
 
-## Roadmap
-
-- **v2:** replace base and shoulder servos with NEMA17 + planetary gearboxes and TMC2209 drivers for true repeatability and higher payload; add a 5th DOF (wrist roll); relocate the wrist servo inward via a linkage to cut shoulder torque.
 
 ## License
 
