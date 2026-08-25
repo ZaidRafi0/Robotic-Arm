@@ -65,7 +65,6 @@ The reasoning behind each major choice. The decisions matter more than the parts
 | Border-frame construction on both links | Perimeter material carries the bending; hollow center saves mass out on the lever arm | Links stay within the 40 g / 32 g budget |
 | Double rack-and-pinion gripper | Two racks on opposite sides of one pinion move in mirror, so both jaws close at equal rate | Parallel jaws that center the object |
 | Module 1.5 gears rather than a finer module | Fine teeth print mushy on FDM and strip under load | Teeth survive printing and grip loads |
-| Kept the SG90 gripper actuator instead of switching to a stepper | A NEMA17 adds ~270 g at the arm's longest lever — roughly 8 kg·cm at the shoulder, past the MG996R's limit | Grip force still adequate; shoulder margin preserved |
 | Internal fillets at boss roots (2 mm) and floor-wall corner (3 mm) | Load-bearing junctions are stress concentrators; both face up when printed floor-down | Stronger parts with no support-material penalty |
 
 ## Actuators & BOM
