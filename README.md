@@ -4,8 +4,16 @@
 
 **Work in progress.** Full CAD model is complete; currently printing and assembling. See [Status](#status).
 
-![Demo](https://s3.ezgif.com/tmp/ezgif-304dbbd5bb995a96.gif)
-<!-- Record a short clip of the arm moving, convert to GIF, and drop it in /media as demo.gif. -->
+![Robotic arm](media/arm_assembly.png)
+<!-- REPLACE ME: full assembly render or photo of the arm.
+     Save the image to /media as arm_assembly.png and it will show up here.
+     A SolidWorks assembly render works now; swap in a photo once it's built. -->
+
+![Robotic Arm](media/arm_assembly.png)
+*Full assembly — 4-axis arm with two-gear linkage claw gripper*
+
+![Demo]([media/demo.gif](https://s3.ezgif.com/tmp/ezgif-304dbbd5bb995a96.gif))
+<!-- REPLACE ME: short clip of the arm moving, converted to GIF, saved to /media as demo.gif. -->
 
 ## Overview
 
@@ -70,7 +78,16 @@ This is a **static** budget — the torque required to hold position at full ext
 
 The shoulder bracket is the highest-stress printed part, so it was analyzed against the load derived above rather than an assumed one.
 
+![FEA von Mises stress plot, shoulder bracket](media/fea_shoulder_bracket.png)
+<!-- REPLACE ME: screenshot of the von Mises stress plot with the legend visible.
+     Save to /media as fea_shoulder_bracket.png. Make sure the legend scale and the
+     yield strength marker are in frame — the numbers are the point. -->
+
 - **Setup:** static study, custom PLA material, fixed at the base flange (its bolted interface), loaded at the servo bore with 2.5 N vertical and 0.63 N·m (the 6.44 kg·cm moment in SI).
+
+![FEA — shoulder bracket](media/fea_shoulder_bracket.png)
+*Von Mises stress under the calculated load case. Peak stress at the servo bore; gusset roots near zero.*
+
 - **Result:** peak von Mises stress of 1.09 MPa against PLA's 50 MPa yield — a factor of safety of roughly 46.
 - **Finding:** stress at the gusset roots and the wall-to-base fillet is near zero, indicating the gussets carry the bending load as intended. The only concentration is local bearing where the load enters the bore, which is a different failure mode than the wall bending the gussets were added to prevent.
 - **Limitation:** the model assumes isotropic bulk PLA. Printed parts are anisotropic — layer adhesion runs roughly 50-70% of in-plane strength — so the as-built factor of safety across layer lines is lower than reported.
