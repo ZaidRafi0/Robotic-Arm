@@ -4,7 +4,7 @@
 
 **Work in progress.** Full CAD model is complete; currently printing and assembling. See [Status](#status).
 
-![Demo](media/demo.gif)
+![Demo](https://s3.ezgif.com/tmp/ezgif-304dbbd5bb995a96.gif)
 <!-- Record a short clip of the arm moving, convert to GIF, and drop it in /media as demo.gif. -->
 
 ## Overview
