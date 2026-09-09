@@ -12,7 +12,7 @@
 ![Robotic Arm](media/arm_assembly.png)
 *Full assembly — 4-axis arm with two-gear linkage claw gripper*
 
-![Demo]([media/demo.gif](https://s3.ezgif.com/tmp/ezgif-304dbbd5bb995a96.gif))
+![Demo]((https://s3.ezgif.com/tmp/ezgif-304dbbd5bb995a96.gif))
 <!-- REPLACE ME: short clip of the arm moving, converted to GIF, saved to /media as demo.gif. -->
 
 ## Overview
