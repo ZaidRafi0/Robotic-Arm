@@ -1,38 +1,37 @@
 # Robotic Arm — 4-Axis Articulated Arm (Custom Design)
 
-> A 4-DOF robotic arm designed and built from scratch — base rotation, shoulder, elbow, and wrist, plus a rack-and-pinion gripper. ~205 mm reach, servo-driven, fully 3D-printed in PLA, controlled with an inverse kinematics solver. Every joint, the base bearing, the gear train, and the actuator selection were designed around a worked torque budget rather than copied from a reference build.
+> A 4-DOF robotic arm designed and built from scratch — base rotation, shoulder, elbow, and wrist, plus a two-gear linkage claw gripper. 338 mm reach, servo-driven, fully 3D-printed in PLA, controlled with an inverse kinematics solver. Every joint, the base bearing, the gear train, and the actuator selection were designed around a worked torque budget rather than copied from a reference build.
 
-**Work in progress.** See [Status](#status) for what's done and what's left.
+**Work in progress.** Full CAD model is complete; currently printing and assembling. See [Status](#status).
 
 ![Demo](media/demo.gif)
 <!-- Record a short clip of the arm moving, convert to GIF, and drop it in /media as demo.gif. -->
 
 ## Overview
 
-A custom 4-axis arm built around the actuators on hand: four MG996R servos and one SG90 micro servo. Rather than starting from a fixed payload/reach target, I worked backward from what those servos could actually hold — the shoulder is the binding constraint, so link lengths were sized to keep it under half of the MG996R's stall torque.
+A custom 4-axis arm built around the actuators on hand: four MG996R servos and one SG90 micro servo. Rather than starting from a fixed payload/reach target, I worked backward from what those servos could actually hold — the shoulder is the binding constraint, so link lengths were sized to keep it well under the MG996R's stall torque.
 
-Two joints drove most of the design work. The **base rotation joint** carries the full weight and tipping moment of the arm on a dedicated bearing surface rather than on the servo's output shaft, which is rated for torque only. The **gripper** uses a double rack-and-pinion so both jaws move symmetrically and stay parallel, centering the object rather than pushing it to one side.
+Two subsystems drove most of the design work. The **base rotation joint** carries the full weight and tipping moment of the arm on a dedicated bearing surface rather than on the servo's output shaft, which is rated for torque only. The **gripper** went through a full redesign — from a double rack-and-pinion to a two-gear linkage claw — after the rack version proved to depend on hardware that wasn't available.
 
 ## Status
 
-v1 of every part is modeled and in `cad/`.
+Full CAD model complete. Currently printing and assembling.
 
-| Part | Status |
-|---|---|
-| Base | Complete |
-| Shoulder bracket | Complete |
-| Upper arm | Complete |
-| Forearm | Complete |
-| Wrist bracket | Needs revision |
-| Gripper housing | Needs revision |
-| Pinion | Needs revision |
-| Rack | Needs revision |
+| Part | Design | Printed |
+|---|---|---|
+| Base | Complete | Yes |
+| Shoulder bracket | Complete | Yes |
+| Upper arm | Complete | Yes |
+| Forearm | Complete | Yes |
+| Wrist bracket | Complete | Pending |
+| Gripper — gears, arms, links, housing | Complete | In progress |
 
-**Remaining work on v1:**
+**Remaining work:**
 
-1. Fix the gripper assembly — wrist bracket, housing, pinion, and racks (see [What broke](#what-broke)).
+1. Print and assemble the remaining parts; iterate on fits (see [What broke](#what-broke)).
 2. Wire the arm: five servos to a PCA9685, separate 5-6 V supply, common ground.
 3. Write and tune the inverse kinematics solver.
+4. Measure as-built payload, grip force, and repeatability.
 
 ## Specs
 
@@ -41,31 +40,56 @@ v1 of every part is modeled and in `cad/`.
 | Degrees of freedom | 4 (base, shoulder, elbow, wrist) + gripper |
 | Upper arm (shoulder to elbow) | 110 mm |
 | Forearm (elbow to wrist) | 95 mm |
-| Working reach | ~205 mm to wrist, ~245 mm to grasp point |
+| Working reach | 338 mm to grasp point |
 | Design payload | 75 g at full extension |
-| Shoulder holding torque (worst case) | ~5.2 kg·cm (47% of MG996R stall) |
-| Jaw opening | ~44 mm |
-| Gear module / pressure angle | 1.5 / 20 degrees |
-| Pinion | 14 teeth, 21 mm pitch dia, 24 mm OD |
-| Repeatability | ___ mm *(to measure)* |
+| Shoulder holding torque (worst case) | 6.44 kg·cm — 59% of MG996R stall |
+| Jaw opening | 49 mm |
+| Printed structure mass | ~107 g |
+| Total arm mass (printed + servos) | ~256 g |
 | Material | PLA throughout |
+
+## Torque budget
+
+The arm was sized from this rather than the other way around. Worst case is the arm held horizontal at full extension; every mass contributes a moment at the shoulder proportional to its distance from the pivot. Masses are as-sliced (4 walls, 30% infill), which is conservative — the links print at 15%.
+
+| Item | Mass | Distance from shoulder | Moment |
+|---|---|---|---|
+| Upper arm | 30.2 g | 5.5 cm | 0.17 kg·cm |
+| Elbow servo | 55 g | 11.0 cm | 0.61 |
+| Forearm | 31.0 g | 15.4 cm | 0.48 |
+| Wrist servo | 55 g | 20.5 cm | 1.13 |
+| Wrist bracket | 18.2 g | 22.0 cm | 0.40 |
+| Gripper assembly + SG90 | 27 g | 30.0 cm | 0.81 |
+| Fasteners and hardware | ~20 g | ~15.0 cm | 0.30 |
+| Payload | 75 g | 33.8 cm | 2.54 |
+| **Shoulder total** | | | **6.44 kg·cm** |
+
+This is a **static** budget — the torque required to hold position at full extension. Accelerating the arm demands more momentarily, which is what the 41% margin to stall absorbs.
+
+## FEA — shoulder bracket
+
+The shoulder bracket is the highest-stress printed part, so it was analyzed against the load derived above rather than an assumed one.
+
+- **Setup:** static study, custom PLA material, fixed at the base flange (its bolted interface), loaded at the servo bore with 2.5 N vertical and 0.63 N·m (the 6.44 kg·cm moment in SI).
+- **Result:** peak von Mises stress of 1.09 MPa against PLA's 50 MPa yield — a factor of safety of roughly 46.
+- **Finding:** stress at the gusset roots and the wall-to-base fillet is near zero, indicating the gussets carry the bending load as intended. The only concentration is local bearing where the load enters the bore, which is a different failure mode than the wall bending the gussets were added to prevent.
+- **Limitation:** the model assumes isotropic bulk PLA. Printed parts are anisotropic — layer adhesion runs roughly 50-70% of in-plane strength — so the as-built factor of safety across layer lines is lower than reported.
 
 ## Design decisions
 
-The reasoning behind each major choice. The decisions matter more than the parts.
-
 | Decision | Why | Result |
 |---|---|---|
-| 4-DOF all-servo layout (SG90 gripper + 4x MG996R) | Designed around available actuators; shoulder torque fits an MG996R only at reduced reach/payload | Working arm without sourcing steppers |
-| Link lengths sized from the shoulder torque budget | Shoulder holding the arm horizontal is the binding load; sized links to stay under 50% of stall | ~5.2 kg·cm worst case, leaving thermal margin |
+| 4-DOF all-servo layout (SG90 gripper + 4x MG996R) | Designed around available actuators; shoulder torque fits an MG996R at this reach and payload | Working arm without sourcing steppers |
+| Link lengths sized from the shoulder torque budget | Shoulder holding the arm horizontal is the binding load | 6.44 kg·cm worst case, 41% margin to stall |
 | SG90 at the gripper instead of an MG996R | Saves ~46 g at the far end of the arm, the worst place for weight | Lower shoulder torque for free |
 | Rotation load on a bearing surface, not the servo shaft | Servo spline is rated for torque, not the arm's weight + tipping moment | Eliminates base wobble; servo drives rotation only |
 | Rim-supported platform + center hold-down pin | Arm's center of mass sits outside the support rim, so an unpinned platform would lift and rock when extended | Rim takes weight, pin resists tipping — stable at full reach |
 | Slotted horn coupling holes | The bearing should locate the platform; rigidly bolting the horn fights it and side-loads the servo | Horn transmits torque while floating radially — no binding |
-| Border-frame construction on both links | Perimeter material carries the bending; hollow center saves mass out on the lever arm | Links stay within the 40 g / 32 g budget |
-| Double rack-and-pinion gripper | Two racks on opposite sides of one pinion move in mirror, so both jaws close at equal rate | Parallel jaws that center the object |
-| Module 1.5 gears rather than a finer module | Fine teeth print mushy on FDM and strip under load | Teeth survive printing and grip loads |
-| Internal fillets at boss roots (2 mm) and floor-wall corner (3 mm) | Load-bearing junctions are stress concentrators; both face up when printed floor-down | Stronger parts with no support-material penalty |
+| Border-frame construction on both links | Perimeter material carries the bending; hollow center saves mass out on the lever arm | Links came in at ~30 g each |
+| Two-gear linkage claw over the earlier rack-and-pinion gripper | The rack design depended on smooth low-friction rails; printed plastic channels bind, and metal linear rails weren't available | A gripper built entirely from printable parts, with no sliding fits — and significantly lighter at the arm's longest lever |
+| Equal-size meshing gear sectors, one driven by the servo | Meshed gears counter-rotate, so a single actuator drives both claw arms symmetrically | Both jaws close at the same rate, centering the object |
+| Teeth cut only over the arc the arms sweep | The arms travel well under a full rotation, so teeth elsewhere are dead material | Less print time and material with no loss of function |
+| Gussets on the shoulder bracket wall | The wall is a cantilever; arm weight tries to fold it at its root | FEA confirms near-zero stress at the gusset roots |
 
 ## Actuators & BOM
 
@@ -75,20 +99,22 @@ The reasoning behind each major choice. The decisions matter more than the parts
 | Shoulder | MG996R | Binding torque constraint — sets the reach/payload limit |
 | Elbow | MG996R | |
 | Wrist | MG996R | Single axis (pitch) |
-| Gripper | SG90 | Drives the pinion through its horn |
+| Gripper | SG90 | Drives one gear sector through its horn |
 | Controller | Arduino Uno + PCA9685 | PCA9685 drives all 5 servos over I2C |
 | Power | Separate 5-6 V, 3 A+ supply | Common ground with the Arduino; never powered off the board |
-| Fasteners | M3 bolts, nuts and washers; M2 at the pinion | Nyloc nuts at vibration-loaded joints |
+| Fasteners | M3 bolts, nuts and washers; M2 at the gripper | Nyloc nuts at vibration-loaded joints |
 
 ## Gripper
 
-Double rack-and-pinion driven by the SG90.
+A two-gear linkage claw driven by the SG90.
 
-- Pinion: module 1.5, 14 teeth, 20 degree pressure angle, 6 mm face width, bolted to the SG90 star horn through its outer holes (torque path) with the center screw retaining the horn on the spline.
-- Racks: two identical, 9 teeth, ~41 mm toothed length, 6 mm backing bar, 6 mm face width. Mounted on opposite sides of the pinion so they travel in opposite directions.
-- Mesh geometry: pinion axis sits 9.0 mm from each rack's tooth-tip plane (pitch radius 10.5 mm minus one module).
-- Travel: ~22 mm per rack over 120 degrees of servo rotation, giving ~44 mm total jaw opening.
-- Housing captures each rack's backing bar in a channel; a cover plate keeps the racks from lifting out of mesh.
+- Two meshing gear sectors of equal size sit side by side, so driving one rotates the other in the opposite direction at the same rate. The SG90 drives one through its horn.
+- Each gear carries a claw arm, and each arm is tied to a link, so the two arms open and close in mirror. Symmetric motion centers the object between the jaws rather than pushing it to one side.
+- Equal gear sizes give a 1:1 ratio, so both arms sweep the same angle for a given servo input.
+- Teeth are cut only over the arc the arms actually travel — a gear sector rather than a full gear.
+- Jaw opening: 49 mm.
+
+Because the arms pivot on the gear axes, the jaw faces tilt as they close — this grips like pliers rather than clamping flat. Parallel closing was a property of the earlier rack design that was traded away for printability.
 
 ## Control
 
@@ -103,22 +129,29 @@ All PLA.
 | Base | 4 | 30% gyroid |
 | Rotating platform | 4 | ribbed (solid rim and hub) |
 | Shoulder bracket | 4 | 30% gyroid |
-| Upper arm | 4 | 15% (target ≤40 g) |
-| Forearm | 3 | 15% (target ≤32 g) |
+| Upper arm | 4 | 15% |
+| Forearm | 3 | 15% |
 | Wrist bracket | 4 | 25-30% |
 | Gripper housing | 4 | 20% |
-| Racks, pinion | 4 | 40%+ |
-| Fingers | 4 | 40-50% |
+| Gear sectors | 4 | 40%+ |
+| Claw arms | 4 | 40-50% |
+| Links | 4 | 50%+ |
 
 Two rules used throughout: **walls carry load, infill fills space** — perimeters go up before infill on anything that feels weak. And **print orientation beats every other setting** — links flat along their length, gear teeth in-plane rather than stacked as layer edges.
 
 ## What broke
 
-**Press-fit and sliding clearances came out too tight.** Three symptoms, one root cause — the clearances modeled for these fits didn't leave enough room once printed. The SG90 push-fit pocket in the gripper housing is too tight, the rack channels are too tight for the racks to slide, and the pinion pocket is too tight for the gear to spin freely. Fix is to open up every clearance on the next revision and print a test coupon of any sliding or press fit before committing to the full part.
+**Modeled clearances don't survive contact with the printer.** The recurring lesson of this build: gaps and fits come out tighter than modeled, because extruded plastic spreads slightly and layer lines encroach on nominal dimensions. Three instances so far:
 
-**The wrist bracket is too short.** Needs more length for the gripper to clear the forearm through the full pitch range.
+- The claw arm's 3 mm center gap prints under 3 mm — layer lines intrude into the opening, closing it up enough to interfere. Needs to be opened up in CAD to land at 3 mm as printed.
+- The SG90 push-fit pocket in the gripper housing came out too tight.
+- On the earlier rack-and-pinion gripper, the rack channels and pinion pocket were both too tight to move freely.
 
-**Gripper jaws initially couldn't close.** The two racks sit 36.5 mm apart with the pinion between them, so straight fingers extending from each rack travel in separate planes and slide past each other rather than meeting. The fingers need to be cranked inward so both jaw faces reach a common centerline.
+The fix in every case is the same: model the clearance larger than the target, and print a test coupon of any fit before committing to a full part.
+
+**Sliding fits in printed plastic were the wrong approach for the gripper.** The original design used two racks sliding in channels on opposite sides of a driven pinion. In practice the printed channels bound against the racks. Opening the clearances would have traded binding for backlash — the design really wanted metal linear rails, which weren't available. Rather than tune a fit that was fighting the process, I replaced the mechanism with a two-gear linkage claw, which achieves symmetric jaw motion using only rotating joints and no sliding surfaces. It also came out considerably lighter, which bought back shoulder torque margin at the longest lever on the arm.
+
+**The wrist bracket was too short** in its first revision — the gripper couldn't clear the forearm through the full pitch range. Lengthened, with the final dimension set by the clearance check rather than chosen.
 
 ## v2 ideas
 
