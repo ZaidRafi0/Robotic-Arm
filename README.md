@@ -4,16 +4,10 @@
 
 **Work in progress.** Full CAD model is complete; currently printing and assembling. See [Status](#status).
 
-![Robotic arm](media/arm_assembly.png)
-<!-- REPLACE ME: full assembly render or photo of the arm.
-     Save the image to /media as arm_assembly.png and it will show up here.
-     A SolidWorks assembly render works now; swap in a photo once it's built. -->
-
 ![Robotic Arm](media/arm_assembly.png)
 *Full assembly — 4-axis arm with two-gear linkage claw gripper*
 
-![Demo](https://s3.ezgif.com/tmp/ezgif-304dbbd5bb995a96.gif)
-<!-- REPLACE ME: short clip of the arm moving, converted to GIF, saved to /media as demo.gif. -->
+![Demo](media/demo.gif)
 
 ## Overview
 
@@ -78,11 +72,6 @@ This is a **static** budget — the torque required to hold position at full ext
 
 The shoulder bracket is the highest-stress printed part, so it was analyzed against the load derived above rather than an assumed one.
 
-![FEA von Mises stress plot, shoulder bracket](media/fea_shoulder_bracket.png)
-<!-- REPLACE ME: screenshot of the von Mises stress plot with the legend visible.
-     Save to /media as fea_shoulder_bracket.png. Make sure the legend scale and the
-     yield strength marker are in frame — the numbers are the point. -->
-
 - **Setup:** static study, custom PLA material, fixed at the base flange (its bolted interface), loaded at the servo bore with 2.5 N vertical and 0.63 N·m (the 6.44 kg·cm moment in SI).
 
 ![FEA — shoulder bracket](media/fea_shoulder_bracket.png)
@@ -124,6 +113,9 @@ The shoulder bracket is the highest-stress printed part, so it was analyzed agai
 ## Gripper
 
 A two-gear linkage claw driven by the SG90.
+
+![Gripper](media/gripper.png)
+*Two-gear linkage claw — meshing gear sectors drive both claw arms from a single SG90*
 
 - Two meshing gear sectors of equal size sit side by side, so driving one rotates the other in the opposite direction at the same rate. The SG90 drives one through its horn.
 - Each gear carries a claw arm, and each arm is tied to a link, so the two arms open and close in mirror. Symmetric motion centers the object between the jaws rather than pushing it to one side.
